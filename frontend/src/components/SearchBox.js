@@ -9,7 +9,7 @@ export default function SearchBox() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const submitHandler = (e) => {
-    e.preventdefault();
+    e.preventDefault();
     navigate(query ? `/search/?query=${query}` : '/search');
   };
   return (
