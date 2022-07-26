@@ -90,20 +90,39 @@ userRouter.post(
 userRouter.post(
   '/signup',
   expressAsyncHandler(async (req, res) => {
+    const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const passwordPattern =
+      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!"#$%&'()*+,-.\/:;<=>?\\@[\]^_`{|}~]).{6,64}$/;
+
+    if (!emailPattern.test(req.body.email)) {
+      res.status(400).send({ message: 'Please provide a valid email' });
+    }
+    if (!passwordPattern.test(req.body.password)) {
+      res.status(400).send({ message: 'Password too weak' });
+    }
     const newUser = new User({
       name: req.body.name,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password),
     });
-    const user = await newUser.save();
-    res.send({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      isAdmin: user.isAdmin,
-      token: generateToken(user),
-    });
-    return;
+    try {
+      const user = await newUser.save();
+      res.send({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        token: generateToken(user),
+      });
+      return;
+    } catch (error) {
+      console.log(error);
+      if (error.code === 11000) {
+        res
+          .status(400)
+          .send({ message: 'Account with this email already exist' });
+      }
+    }
   })
 );
 
