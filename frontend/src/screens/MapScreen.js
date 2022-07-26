@@ -11,7 +11,7 @@ import { Store } from '../Store';
 import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 
-const defaultLocation = { lat: 45.516, lng: -73.56 };
+const defaultLocation = { lat: 43.304, lng: 5.369 };
 const libs = ['places'];
 
 export default function MapScreen() {
@@ -55,7 +55,7 @@ export default function MapScreen() {
     ctxDispatch({
       type: 'SET_FULLBOX_ON',
     });
-  }, [ctxDispatch]);
+  }, [ctxDispatch, userInfo.token]);
 
   const onLoad = (map) => {
     mapRef.current = map;
